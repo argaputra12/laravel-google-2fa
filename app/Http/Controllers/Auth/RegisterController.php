@@ -82,7 +82,11 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        $this->validator($request->all())->validate();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email:rfc,dns|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
 
         $google2fa = app('pragmarx.google2fa');
 
@@ -97,7 +101,7 @@ class RegisterController extends Controller
             $registration_data['email'],
             $registration_data['google2fa_secret']
         );
-        
+
         return view('google2fa.register', ['QR_Image' => $QR_Image, 'secret' => $registration_data['google2fa_secret']]);
     }
 
@@ -107,7 +111,7 @@ class RegisterController extends Controller
      * @return response()
      */
     public function completeRegistration(Request $request)
-    {        
+    {
         $request->merge(session('registration_data'));
 
         return $this->registration($request);
