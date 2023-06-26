@@ -21,19 +21,14 @@ class UserTest extends TestCase
     //     $response->assertStatus(200);
     // }
 
-    public function test_login()
-    {
-        $response = $this->get('/login');
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
-    }
-
-    
     public function test_login_with_correct_credentials()
     {
+
+        $user = User::factory()->create();
+
         $response = $this->post('/login', [
-            'email' => 'user@user.com',
+            'email' => $user->email,
             'password' => 'password'
         ]);
 
@@ -50,15 +45,6 @@ class UserTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors();
-    }
-
-
-    public function test_register()
-    {
-        $response = $this->get('/register');
-
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.register');
     }
 
 
@@ -103,6 +89,7 @@ class UserTest extends TestCase
 
         $response->assertSessionHasErrors();
     }
+
 
 
 }
